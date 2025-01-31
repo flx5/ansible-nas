@@ -1,0 +1,20 @@
+argument_specs:
+  # main.yml entry point
+  main:
+    short_description: Main entry point for the monitoring role
+    options:
+      grafana_cloud_api_key:
+        type: "str"
+        required: true
+      metrics_username:
+        type: "str"
+        required: true
+      prometheus_url:
+        type: "str"
+        required: true
+      logs_username:
+        type: "str"
+        required: true
+      loki_url:
+        type: "str"
+        required: true

@@ -12,3 +12,4 @@
         fileShare: true
         zfs: true
         machines: true
+    - role: monitoring
