@@ -1,0 +1,5 @@
+- name: Cockpit Machines
+  ansible.builtin.apt:
+    pkg:
+      - cockpit-machines
+    state: latest

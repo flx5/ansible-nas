@@ -6,7 +6,9 @@
   roles:
     - role: common
     - role: zfs
+    - role: libvirt
     - role: cockpit
       vars:
         fileShare: true
         zfs: true
+        machines: true

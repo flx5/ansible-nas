@@ -1,0 +1,9 @@
+# https://wiki.debian.org/KVM#Installation
+- name: Install LibVirt
+  ansible.builtin.apt:
+    pkg:
+    - qemu-system
+    - libvirt-clients
+    - libvirt-daemon-system
+    install_recommends: false
+    state: latest

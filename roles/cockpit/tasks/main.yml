@@ -1,6 +1,8 @@
 - name: Install Cockpit
   ansible.builtin.apt:
-    name: cockpit
+    pkg:
+    - cockpit
+    - cockpit-storaged
     state: latest
     default_release: "{{ ansible_distribution_release }}-backports"
 
@@ -15,3 +17,7 @@
 - name: Cockpit Fileshare
   import_tasks: cockpit-fileshare.yml
   when: fileShare
+
+- name: Cockpit Machines
+  import_tasks: cockpit-machines.yml
+  when: machines
