@@ -1,0 +1,8 @@
+- name: Cockpit ZFS | Repository Key
+  ansible.builtin.get_url:
+    url: http://images.45drives.com/repo/keys/aptpubkey.asc
+    dest: /etc/apt/keyrings/45drives.asc
+- name: Cockpit ZFS | Repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/45drives.asc] http://images.45drives.com/repo/debian stable main"
+    state: present

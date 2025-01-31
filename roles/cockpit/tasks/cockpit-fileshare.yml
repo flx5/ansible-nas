@@ -1,0 +1,5 @@
+- name: Cockpit Fileshare
+  ansible.builtin.apt:
+    pkg:
+      - cockpit-file-sharing
+    state: latest

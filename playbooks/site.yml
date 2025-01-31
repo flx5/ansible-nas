@@ -1,0 +1,12 @@
+---
+- name: NAS Setup
+  hosts: nas
+  gather_facts: true
+  become: true
+  roles:
+    - role: common
+    - role: zfs
+    - role: cockpit
+      vars:
+        fileShare: true
+        zfs: true

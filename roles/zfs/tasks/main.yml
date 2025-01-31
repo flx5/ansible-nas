@@ -1,0 +1,34 @@
+# https://wiki.debian.org/ZFS#Installation
+- name: Install ZFS
+  block:
+    - name: Install ZFS | Linux Headers
+      ansible.builtin.apt:
+        name: linux-headers-amd64
+        state: latest
+    - name: Install ZFS | ZFS Packages
+      ansible.builtin.apt:
+        pkg:
+          - zfsutils-linux
+          - zfs-dkms
+          - nfs-kernel-server
+          - samba
+        state: latest
+        default_release: "{{ ansible_distribution_release }}-backports"
+    - name: Install ZFS | Ensure zfs-load-module is running
+      ansible.builtin.systemd_service:
+        state: started
+        name: zfs-load-module
+
+    - name: Install ZFS | Install Autoload Key Service
+      ansible.builtin.copy:
+        src: zfs-load-key-custom.service
+        dest: /etc/systemd/system/zfs-load-key-custom.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install ZFS | Enable Autoload Key Service
+      ansible.builtin.systemd_service:
+        name: zfs-load-key-custom
+        enabled: true
+        masked: no

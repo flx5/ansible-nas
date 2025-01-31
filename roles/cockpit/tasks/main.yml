@@ -1,0 +1,17 @@
+- name: Install Cockpit
+  ansible.builtin.apt:
+    name: cockpit
+    state: latest
+    default_release: "{{ ansible_distribution_release }}-backports"
+
+- name: Cockpit 45drives Repository
+  import_tasks: cockpit-45drives.yml
+  when: zfs or fileShare | bool
+
+- name: Cockpit ZFS
+  import_tasks: cockpit-zfs.yml
+  when: zfs
+
+- name: Cockpit Fileshare
+  import_tasks: cockpit-fileshare.yml
+  when: fileShare

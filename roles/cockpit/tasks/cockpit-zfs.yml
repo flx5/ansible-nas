@@ -1,0 +1,42 @@
+
+- name: Cockpit ZFS
+  block:
+    - name: Cockpit ZFS | Package
+      ansible.builtin.apt:
+        pkg:
+          - cockpit-zfs-manager
+        state: latest
+    - name: Cockpit ZFS | Missing files
+      # See https://github.com/45Drives/cockpit-zfs-manager/issues/34
+      block:
+        - ansible.builtin.file:
+            path: /usr/share/cockpit/base1/fonts/
+            state: directory
+            mode: '0755'
+        - ansible.builtin.get_url:
+            url: https://github.com/saper/reformcopyright/raw/refs/heads/master/www.reformonsledroitdauteur.eu/font-awesome/fonts/fontawesome-webfont.woff%3Fv=4.2.0
+            dest: /usr/share/cockpit/base1/fonts/fontawesome.woff
+        - ansible.builtin.get_url:
+            url: https://github.com/patternfly/patternfly-sass/raw/refs/heads/master/assets/fonts/patternfly/PatternFlyIcons-webfont.woff
+            dest: /usr/share/cockpit/base1/fonts/patternfly.woff
+        - ansible.builtin.file:
+            path: /usr/share/cockpit/zfs/assets/fonts/RedHatDisplay/
+            state: directory
+            mode: '0755'
+        - ansible.builtin.get_url:
+            url: https://static.oeh.ac.at/fonts/ofl/redhatdisplay/RedHatDisplay-Medium.woff
+            dest: /usr/share/cockpit/zfs/assets/fonts/RedHatDisplay/RedHatDisplay-Medium.woff
+        - ansible.builtin.file:
+            path: /usr/share/cockpit/zfs/assets/fonts/RedHatText/
+            state: directory
+            mode: '0755'
+        - ansible.builtin.get_url:
+            url: https://static.oeh.ac.at/fonts/ofl/redhattext/RedHatText-Regular.woff
+            dest: /usr/share/cockpit/zfs/assets/fonts/RedHatText/RedHatText-Regular.woff
+        - ansible.builtin.get_url:
+            url: https://static.oeh.ac.at/fonts/ofl/redhattext/RedHatText-Medium.woff
+            dest: /usr/share/cockpit/zfs/assets/fonts/RedHatText/RedHatText-Medium.woff
+
+
+
+

@@ -1,0 +1,9 @@
+- name: Ensure Backports is enabled for Cockpit and ZFS
+  ansible.builtin.apt_repository:
+    repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib"
+    state: present
+
+- name: Update Cache
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
