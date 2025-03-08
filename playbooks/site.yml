@@ -13,3 +13,4 @@
         zfs: true
         machines: true
     - role: monitoring
+    - role: democratic-csi

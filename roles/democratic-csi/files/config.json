@@ -1,0 +1,30 @@
+{
+  "hosts": [],
+  "ports": [
+    {
+      "addr": {
+        "adrfam": "ipv4",
+        "traddr": "0.0.0.0",
+        "treq": "not specified",
+        "trsvcid": "4420",
+        "trtype": "tcp"
+      },
+      "ana_groups": [
+        {
+          "ana": {
+            "state": "optimized"
+          },
+          "grpid": 1
+        }
+      ],
+      "param": {
+        "inline_data_size": "-1",
+        "pi_enable": "0"
+      },
+      "portid": 1,
+      "referrals": [],
+      "subsystems": []
+    }
+  ],
+  "subsystems": []
+}

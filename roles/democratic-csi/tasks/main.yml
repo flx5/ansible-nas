@@ -1,0 +1,111 @@
+- name: Install democratic-csi server dependencies
+  ansible.builtin.apt:
+    pkg:
+    - nfs-kernel-server
+    - targetcli-fb
+    - samba
+#    - smbclient
+    # Dependencies for nvmet (currently not in package repositories)
+    - git
+    - python3-pip
+    - python3-configshell-fb
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Ensure nfs-kernel-server daemon is running
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: nfs-kernel-server
+
+- name: Add the user democratic-csi
+  ansible.builtin.user:
+    name: democratic-csi
+    comment: User for democratic-csi
+    create_home: true
+    password: "{{ democratic_csi_pass }}"
+
+- name: Set authorized key taken from file
+  ansible.posix.authorized_key:
+    user: democratic-csi
+    state: present
+    key: |
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo6w0xRcNgX0ty0Q28Mayof8jGgHAHEAhkcjDCTuTlx
+
+- name: >-
+    Allow the democratic-csi user to run sudo
+  community.general.sudoers:
+    name: democratic-csi
+    user: democratic-csi
+    commands:
+      # Restrict democratic csi somewhat. This isn't perfect because of how glob is handled but at least something.
+      # Would need to write custom scripts to get this done properly.
+      - /sbin/zfs * pool1/k8s/democratic-csi/pvc-*
+      - /usr/bin/chmod [0-9][0-9][0-9][0-9] /pool1/k8s/democratic-csi/*
+      - /usr/bin/chown * /pool1/k8s/democratic-csi/*
+    nopassword: true
+
+- name: Add the user democratic-csi-smb
+  ansible.builtin.user:
+    name: democratic-csi-smb
+    comment: User for democratic-csi SMB
+    create_home: false
+    system: true
+    password: "{{ democratic_csi_smb_pass }}"
+
+# TODO Disable motd
+# TODO smbpasswd -L -a smbroot
+
+- name: NvmeOf
+  block:
+  - name: Ensure nvmeof target modules are loaded
+    community.general.modprobe:
+      name: "{{ item }}"
+      state: present
+      persistent: present
+    loop:
+      - nvmet
+      - nvmet-tcp
+      - nvmet-fc
+      - nvmet-rdma
+
+  - name: Git checkout
+    ansible.builtin.git:
+      repo: 'git://git.infradead.org/users/hch/nvmetcli.git'
+      dest: nvmetcli
+
+  - name: Change the working directory to somedir/ and run the command as db_owner if /path/to/database does not exist
+    ansible.builtin.command: python3 setup.py install --prefix=/usr
+    args:
+      chdir: nvmetcli/
+
+  - name: Copy nvmet.service
+    ansible.builtin.copy:
+      src: nvmet.service
+      dest: "/etc/systemd/system/nvmet.service"
+      mode: "0600"
+
+  - name: Create nvmet directory
+    ansible.builtin.file:
+      path: /etc/nvmet
+      state: directory
+      mode: '0755'
+
+  - name: Copy nvmet configuration
+    ansible.builtin.copy:
+      src: config.json
+      dest: "/etc/nvmet/config.json"
+      mode: "0600"
+    notify: Restart nvmet
+
+  - name: Ensure nvmet daemon is running
+    ansible.builtin.systemd_service:
+      state: started
+      enabled: true
+      name: nvmet
+
+
+# TODO
+# prevent log files from filling up disk
+#ln -sf /dev/null ~/.nvmetcli/log.txt
+#ln -sf /dev/null ~/.nvmetcli/history.txt

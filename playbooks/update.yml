@@ -1,0 +1,7 @@
+---
+- name: NAS Setup
+  hosts: nas
+  gather_facts: true
+  become: true
+  roles:
+    - role: update
