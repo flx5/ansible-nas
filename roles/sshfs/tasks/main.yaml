@@ -1,0 +1,31 @@
+- name: Install SSHFS
+  ansible.builtin.apt:
+    pkg:
+      - sshfs
+      - sshpass
+    state: latest
+
+- name: Create mount target
+  ansible.builtin.file:
+    path: /mnt/seedbox
+    state: directory
+    mode: '0755'
+
+- name: Copy using inline content
+  ansible.builtin.copy:
+    content: '{{ sshfs_pass }}'
+    dest: /root/sftp.pass
+
+- name: Add to known hosts
+  ansible.builtin.known_hosts:
+    name: "{{ sshfs_host }}"
+    key: "{{ sshfs_host }} {{ sshfs_pubkey }}"
+    state: present
+
+- name: Mount the sshfs
+  ansible.posix.mount:
+    src: "{{ sshfs_user }}@{{ sshfs_host }}:/"
+    path: /mnt/seedbox
+    opts: ssh_command=sshpass\040-f\040/root/sftp.pass\040ssh,uid=1000,gid=100,umask=0,allow_other,_netdev,ServerAliveInterval=15,HostKeyAlgorithms=+ssh-rsa
+    state: mounted
+    fstype: sshfs

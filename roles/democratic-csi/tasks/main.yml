@@ -45,6 +45,14 @@
       - /usr/bin/chown * /pool1/k8s/democratic-csi/*
     nopassword: true
 
+- name: Copy sudo config for logging sudo commands
+  ansible.builtin.copy:
+    content: |
+      Defaults:democratic-csi logfile=/var/log/democratic-csi-sudo.log
+    dest: "/etc/sudoers.d/democratic-csi-config"
+    mode: "0640"
+    state: absent
+
 - name: Add the user democratic-csi-smb
   ansible.builtin.user:
     name: democratic-csi-smb
