@@ -4,7 +4,7 @@
     - name: Install ZFS | Linux Headers
       ansible.builtin.apt:
         name: linux-headers-amd64
-        state: latest
+        state: present
     - name: Install ZFS | ZFS Packages
       ansible.builtin.apt:
         pkg:
@@ -12,7 +12,8 @@
           - zfs-dkms
           - nfs-kernel-server
           - samba
-        state: latest
+        # Don't do latest here. zfs-dkms compiles during package install which takes quite a while.
+        state: present
         default_release: "{{ ansible_distribution_release }}-backports"
     - name: Install ZFS | Ensure zfs-load-module is running
       ansible.builtin.systemd_service:

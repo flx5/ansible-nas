@@ -40,7 +40,10 @@
     commands:
       # Restrict democratic csi somewhat. This isn't perfect because of how glob is handled but at least something.
       # Would need to write custom scripts to get this done properly.
-      - /sbin/zfs * pool1/k8s/democratic-csi/pvc-*
+      - /sbin/zfs * pool1/k8s/democratic-csi
+      - /sbin/zfs * pool1/k8s/democratic-csi/*
+      - /sbin/zfs * pool1/k8s/democratic-csi-snapshots
+      - /sbin/zfs * pool1/k8s/democratic-csi-snapshots/*
       - /usr/bin/chmod [0-9][0-9][0-9][0-9] /pool1/k8s/democratic-csi/*
       - /usr/bin/chown * /pool1/k8s/democratic-csi/*
     nopassword: true
@@ -51,7 +54,7 @@
       Defaults:democratic-csi logfile=/var/log/democratic-csi-sudo.log
     dest: "/etc/sudoers.d/democratic-csi-config"
     mode: "0640"
-    state: absent
+    state: present
 
 - name: Add the user democratic-csi-smb
   ansible.builtin.user:
