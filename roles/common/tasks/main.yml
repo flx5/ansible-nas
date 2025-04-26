@@ -7,3 +7,16 @@
   ansible.builtin.apt:
     update_cache: yes
     cache_valid_time: 3600
+
+
+# Need to increase the amount of inotify watchers for jellyfin library watching.
+# See also https://www.suse.com/de-de/support/kb/doc/?id=000020048
+- ansible.posix.sysctl:
+    name: fs.inotify.max_user_instances
+    value: 8192
+    state: present
+
+- ansible.posix.sysctl:
+    name: fs.inotify.max_user_watches
+    value: 524288
+    state: present
